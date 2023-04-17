@@ -1,0 +1,93 @@
+/** Implements a graphical square. */
+class Ball {
+
+   field int x, y; // screen location of the square's top-left corner
+   field int size; // length of this square, in pixels
+   field int ballDirection; // The current direction of the ball
+
+   /** Constructs a new square with a given location and size. */
+   constructor Ball new(int Ax, int Ay, char startKey) {
+      let x = Ax;
+      let y = Ay;
+      let size = 5;
+      do draw();
+      do initBallDirection(startKey);
+      return this;
+   }
+
+   /** Disposes this square. */
+   method void dispose() {
+      do Memory.deAlloc(this);
+      return;
+   }
+
+   /** Draws the square on the screen. */
+   method void draw() {
+      do Screen.setColor(true);
+      do Screen.drawRectangle(x, y, x + size, y + size);
+      return;
+   }
+
+   /** Erases the square from the screen. */
+   method void erase() {
+      do Screen.setColor(false);
+      do Screen.drawRectangle(x, y, x + size, y + size);
+      return;
+   }
+
+   method int getx(){return x;}
+
+   method int gety(){return y;}
+
+   method int getSize(){return size;}
+   
+   //Function for handeling ball deflection on player hit
+   method void deflectBall(){
+      if(ballDirection = 0){let ballDirection = 2;}
+      else{
+         if(ballDirection = 1){let ballDirection = 3;} 
+         else{
+            if(ballDirection = 2){let ballDirection = 0;}
+            else{
+               if(ballDirection = 3){let ballDirection = 1;}
+            }
+
+         }
+
+      
+      }
+
+      do moveBall();
+      
+      return;
+   }
+
+   //Randomize a driection based on the pressed key and set it in the var
+   method void initBallDirection(char startKey){
+      var Random random;
+      let random = Random.new(startKey);
+      let ballDirection = random.randRange(3);
+      do random.dispose();
+      return;
+   }
+   //Check wall hits and initiate the movement of the ball based on it
+   method void initBallMovement(){
+      
+      if((ballDirection = 0) & (y < 43)){let ballDirection = 1;} //Right Up ---> Right down
+      if((ballDirection = 1) & (y > 247)){let ballDirection = 0;}// Right down --- right Up
+      if((ballDirection = 2) & (y < 43)){let ballDirection = 3;} //Left up ---> Left down
+      if((ballDirection = 3) & (y > 247)){let ballDirection = 2;}// Left Down ---> Left up
+      do moveBall();
+      
+      return;
+   }
+   //Draw the ball towards the driection stated in the variable
+   method void moveBall(){
+      do Sys.wait(3);
+      if(ballDirection = 0){do erase(); let y = y - 1; let x = x + 1; do draw();}
+      if(ballDirection = 1){do erase(); let y = y + 1; let x = x + 1; do draw();}
+      if(ballDirection = 2){do erase(); let y = y - 1; let x = x - 1; do draw();}
+      if(ballDirection = 3){do erase();let y = y + 1; let x = x - 1; do draw();}
+      return;
+   }
+}

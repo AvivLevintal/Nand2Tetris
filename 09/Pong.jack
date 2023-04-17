@@ -1,0 +1,132 @@
+
+
+class Pong{
+    field Ball ball; 
+    field Player human; //P1
+    field Player computer; //P2
+    field int direction; //Direction P1
+    field int directionC; //Direction P2
+    field int scoreHuman; //Score P1
+    field int scoreComputer; // Score P2
+    field char startKey; //First key pressed value
+    constructor Pong new() {
+    
+      do Output.moveCursor(12,21);
+      do Output.printString("Press anything to start");
+      let startKey = 0;
+      // The start message handling
+      while((startKey = 0)){
+         let startKey = Keyboard.keyPressed();
+      }
+      do Output.moveCursor(12,21);
+      do Output.printString("                       ");
+      let ball = Ball.new(240, 130, startKey);
+      let human = Player.new(25,170, 40);
+      let computer = Player.new(487,170, 40);
+      do Screen.setColor(true);
+      do Screen.drawLine(0,40,511,40);
+      return this;
+    }
+
+   method void dispose() {
+      do ball.dispose();
+      do computer.dispose();
+      do human.dispose();
+      do Memory.deAlloc(this);
+      do Screen.setColor(false);
+      do Screen.drawLine(0,40,512,40);
+      return;
+   }
+   //Move the players
+   method void moveHuman() {
+      if (direction = 1) { do human.moveUp(); }
+      if (direction = 2) { do human.moveDown(); }
+      if (directionC = 1) { do computer.moveUp(); }
+      if (directionC = 2) { do computer.moveDown(); }
+      do Sys.wait(1);
+      return;
+   }
+
+   //Checks whether the ball and the player intersect with each otehr
+   method void isPlayerHit(){
+
+      if(((ball.getx() > human.getx()) & (ball.getx() < (human.getx() + human.getSizeX()))) & ((ball.gety() > (human.gety() - ball.getSize())) & (ball.gety() < (human.gety() + human.getSizeY())))){
+         do ball.deflectBall();
+      }
+      if((( (ball.getx() + ball.getSize()) < (computer.getx() + computer.getSizeX())) & ((ball.getx() + ball.getSize()) > computer.getx())) & ((ball.gety() > (computer.gety() - ball.getSize())) & (ball.gety() < (computer.gety() + computer.getSizeY())))){
+         do ball.deflectBall();
+      }
+      return;
+   
+   }
+   //Checks if a goal was scored
+   method void isGoal() {
+      var int goalCheck;
+      let goalCheck = ball.getx();
+      if ((goalCheck < 2)){
+         do ball.erase();
+         do ball.dispose();
+         let scoreComputer = scoreComputer + 1;
+         let startKey = startKey + 2;
+         do drawScore();
+         let ball = Ball.new(240, 130, startKey);
+      }
+      
+      else{if ((goalCheck > 505)){
+         do ball.erase();
+         do ball.dispose();
+         let scoreHuman = scoreHuman + 1;
+         let startKey = startKey + 1;
+         do drawScore();
+         let ball = Ball.new(240, 130, startKey);
+      }
+   }
+      
+      return;
+   }
+   //Draw the current score
+   method void drawScore(){
+      do Output.moveCursor(1,27);
+      do Output.printInt(scoreHuman);
+      do Output.moveCursor(1,37);
+      do Output.printInt(scoreComputer);
+      return;
+   }
+
+   method void run() {
+      var char keyPressed;  
+      var char key;
+      var boolean exit;
+      var int temp;
+      let scoreComputer = 0;
+      let scoreHuman = 0;
+      do drawScore();
+      let exit = false;
+
+
+      while (~exit) {
+
+
+         do ball.initBallMovement();
+         do isGoal();
+         let keyPressed = Keyboard.keyPressed();
+         let key = Keyboard.keyPressed();
+
+
+         if (keyPressed = 81)  { let exit = true; }     // q key
+         if (keyPressed = 68) { let direction = 1; }   // up d
+         if (keyPressed = 67) { let direction = 2; }   // down c
+         if (keyPressed = 131) { let directionC = 1; }   // down arrow
+         if (keyPressed = 133) { let directionC = 2; }   // down arrow
+         while (keyPressed = key) {
+            do ball.initBallMovement();
+            do isGoal();
+            let key = Keyboard.keyPressed();
+            do moveHuman();
+            do isPlayerHit();
+         }
+     } // while
+     return;
+   }
+
+}

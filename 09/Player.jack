@@ -1,0 +1,68 @@
+
+class Player {
+
+   field int x, y; // screen location of the square's top-left corner
+   field int sizeX, sizeY; // length of this square, in pixels
+
+   // Constructs a new player with a given location and size
+   constructor Player new(int Ax, int Ay, int Asize) {
+      let x = Ax;
+      let y = Ay;
+      let sizeX = 2;
+      let sizeY = Asize;
+      do draw();
+      return this;
+   }
+
+   //Disposes this player 
+   method void dispose() {
+      do Memory.deAlloc(this);
+      return;
+   }
+   
+   method int getx(){return x;}
+
+   method int gety(){return y;}
+   
+   method int getSizeX(){return sizeX;}
+
+   method int getSizeY(){return sizeY;}
+
+   // Draws the player on the screen
+   method void draw() {
+      do Screen.setColor(true);
+      do Screen.drawRectangle(x, y, x + sizeX, y + sizeY);
+      return;
+   }
+
+   // Erases the player from the screen
+   method void erase() {   
+      do Screen.setColor(false);
+      do Screen.drawRectangle(x, y, x + sizeX, y + sizeY);
+      return;
+   }
+
+   // Moves the player up by 2 pixels
+   method void moveUp() {
+      if (y > 42) {
+         do Screen.setColor(false);
+         do Screen.drawRectangle(x, (y + sizeY) - 1, x + sizeX, y + sizeY);
+         let y = y - 2;
+         do Screen.setColor(true);
+         do Screen.drawRectangle(x, y, x + sizeX, y + 1);
+      }
+      return;
+   }
+
+   //Moves the square down by 2 pixels
+   method void moveDown() {
+      if ((y + sizeY) < 252) {
+         do Screen.setColor(false);
+         do Screen.drawRectangle(x, y, x + sizeX, y + 1);
+         let y = y + 2;
+         do Screen.setColor(true);
+         do Screen.drawRectangle(x, (y + sizeY) - 1, x + sizeX, y + sizeY);
+      }
+      return;
+   }
+}
